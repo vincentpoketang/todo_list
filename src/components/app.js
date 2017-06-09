@@ -1,36 +1,66 @@
 import React, {Component} from 'react';
-import listData from './data/todo_data';
 import ViewList from './view_list';
 import AddForm from './add_form';
 import './style.css';
+import axios from 'axios';
 
 class App extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			list: listData
+			list: []
 		}
+		this.BASE_URL = 'http://api.scottbowlerdev.com';
+		this.API_KEY = '?key=jackrayallday';
+	}
+	componentDidMount(){
+		this.getData();
+	}
+	getData(){
+		axios.get(`${this.BASE_URL}/todos${this.API_KEY}`).then((resp)=>{
+			console.log('componentDidMount Server Response:',resp.data.todos);
+			
+			this.setState({
+				list:resp.data.todos
+			})
+		});
 	}
 	addItem(item){
 		console.log('addItem in App. Item is:',item);
 		//const addItem = {completed: false, ...item};
-		const {list} = this.state;
-		this.setState({
-			list: [item,...list]
+		axios.post(`${this.BASE_URL}/todos${this.API_KEY}`,item).then((resp)=>{
+			console.log('Server resp:',resp.data.success);
+			if(resp.data.success){
+				this.getData();
+			}
 		});
 	}
 	deleteItem(index){
-		const {list} = this.state;
+		/*const {list} = this.state;
 		list.splice(index,1);
 		this.setState({
 			list:[...list]
+		});*/
+		console.log('Item id of item to be deleted:',index);
+		axios.delete(`${this.BASE_URL}/todos/${index + this.API_KEY}`).then((resp)=>{
+			console.log('Resp from Delete',resp);
+			if(resp.data.success){
+				this.getData();
+			}
 		});
 	}
 	completeItem(index){
-		const {list} = this.state;
-		list[index].completed = !list[index].completed;
+		/*const {list} = this.state;
+		list[index].complete = !list[index].complete;
 		this.setState({
 			list:[...list]
+		});*/
+		console.log('Item id of item to be complete:',index);
+		axios.put(`${this.BASE_URL}/todos/${index + this.API_KEY}`).then((resp)=>{
+			console.log('Resp from Complete',resp);
+			if(resp.data.success){
+				this.getData();
+			}
 		});
 	}
 	render(){

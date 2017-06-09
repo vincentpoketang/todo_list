@@ -5,8 +5,7 @@ export default class AddForm extends Component{
 		this.state={
 			form: {
 				title: '',
-				details: '',
-				completed:false
+				details: ''
 			}
 		}
 	}
@@ -24,8 +23,7 @@ export default class AddForm extends Component{
 		this.setState({
 			form:{
 				title:'',
-				details:'',
-				completed:false
+				details:''
 			}
 		});
 	}
